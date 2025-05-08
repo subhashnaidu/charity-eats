@@ -1,0 +1,3 @@
+<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
+
+This project is a Next.js 15 food ordering platform. Use best practices for Next.js, TypeScript, Tailwind CSS, and accessibility. Follow modern conventions for folder structure and component design. Prioritize mobile responsiveness and clean, maintainable code.
