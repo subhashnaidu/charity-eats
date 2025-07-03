@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
 
 interface MenuItem {
   id: string;
@@ -52,6 +53,45 @@ export default function VendorMenuPage() {
   const [form, setForm] = useState<MenuItem | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          // Handle case where token is missing, maybe redirect to login
+          console.error("No token found");
+          return;
+        }
+
+        // Decode the token to get user information, including the user ID
+        const decodedToken: any = jwtDecode(token);
+        const vendorId = decodedToken.sub; // Assuming 'sub' claim contains the user ID
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/menu/vendor/${vendorId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            // Handle unauthorized, maybe redirect to login
+            console.error("Unauthorized");
+             // router.push("/auth"); // If using useRouter
+          }
+          throw new Error("Failed to fetch menu items");
+        }
+
+        const data = await response.json();
+        setMenu(data);
+      } catch (error) {
+        console.error("Error fetching menu items:", error);
+      }
+    };
+
+    fetchMenu();
+  }, []);
+
   const handleEdit = (idx: number) => {
     setEditIdx(idx);
     setForm(menu[idx]);
@@ -71,13 +111,96 @@ export default function VendorMenuPage() {
     });
   };
 
-  const handleSave = (idx: number) => {
+  const handleSave = async (idx: number) => {
     if (!form) return;
-    setMenu((prev) => prev.map((item, i) => (i === idx ? form : item)));
-    setEditIdx(null);
-    setForm(null);
-    setSuccess("Menu item updated!");
-    setTimeout(() => setSuccess(null), 2000);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/menu/${form.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update menu item");
+      }
+
+      const updatedItem = await response.json();
+      setMenu((prev) => prev.map((item, i) => (i === idx ? updatedItem : item)));
+      setEditIdx(null);
+      setForm(null);
+      setSuccess("Menu item updated!");
+      setTimeout(() => setSuccess(null), 2000);
+    } catch (error) {
+      console.error("Error updating menu item:", error);
+    }
+  };
+
+  const handleAddNewItem = async () => {
+    const newItem = {
+      name: "New Item",
+      description: "Description here",
+      price: "1.00", // Send price as a string for Decimal compatibility
+      is_available: true, // Include is_available
+      image_url: null, // Explicitly include image_url as null
+    };
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+      const decodedToken: any = jwtDecode(token);
+      const vendorId = decodedToken.sub;
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/menu/vendor/${vendorId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newItem),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json();
+        console.error("Backend error details:", errorBody);
+        throw new Error("Failed to add new menu item");
+      }
+
+      const createdItem = await response.json();
+      setMenu((prev) => [...prev, createdItem]);
+      setSuccess("New menu item added!");
+      setTimeout(() => setSuccess(null), 2000);
+    } catch (error) {
+      console.error("Error adding new menu item:", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/menu/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete menu item");
+      }
+
+      setMenu((prev) => prev.filter((item) => item.id !== id));
+      setSuccess("Menu item deleted!");
+      setTimeout(() => setSuccess(null), 2000);
+    } catch (error) {
+      console.error("Error deleting menu item:", error);
+    }
   };
 
   return (
@@ -93,6 +216,12 @@ export default function VendorMenuPage() {
             Back to Orders
           </Link>
         </div>
+        <button
+          onClick={handleAddNewItem}
+          className="mb-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm font-medium"
+        >
+          Add New Item
+        </button>
         <ul className="space-y-6">
           {menu.map((item, idx) => (
             <li key={item.id} className="border rounded p-4 bg-gray-50">
@@ -154,13 +283,22 @@ export default function VendorMenuPage() {
                     <p className="text-black text-sm mb-1">{item.description}</p>
                     <span className="font-bold">${item.price.toFixed(2)}</span>
                   </div>
-                  <button
-                    onClick={() => handleEdit(idx)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium"
-                    aria-label={`Edit ${item.name}`}
-                  >
-                    Edit
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(idx)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm font-medium"
+                      aria-label={`Edit ${item.name}`}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 text-sm font-medium"
+                      aria-label={`Delete ${item.name}`}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               )}
             </li>

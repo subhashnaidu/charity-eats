@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 // Simulated vendor data (replace with API integration as needed)
@@ -30,6 +30,31 @@ export default function VendorProfilePage() {
   const [form, setForm] = useState(initialVendor);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Fetch the current vendor's profile from the backend
+  useEffect(() => {
+    const fetchVendorProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/vendors/profile/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch vendor profile");
+        }
+
+        const data = await response.json();
+        setVendor(data);
+      } catch (error) {
+        console.error("Error fetching vendor profile:", error);
+      }
+    };
+
+    fetchVendorProfile();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -44,12 +69,32 @@ export default function VendorProfilePage() {
     setForm(vendor);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  // Update the vendor's profile on the backend
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setVendor(form);
-    setEditing(false);
-    setSuccess("Profile updated successfully!");
-    setTimeout(() => setSuccess(null), 2000);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/vendors/profile`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update vendor profile");
+      }
+
+      const updatedVendor = await response.json();
+      setVendor(updatedVendor);
+      setEditing(false);
+      setSuccess("Profile updated successfully!");
+      setTimeout(() => setSuccess(null), 2000);
+    } catch (error) {
+      console.error("Error updating vendor profile:", error);
+    }
   };
 
   return (
