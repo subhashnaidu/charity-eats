@@ -8,8 +8,7 @@ from api.wallet import router as wallet_router
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-from core.database import init_db, async_engine
-from sqlalchemy.ext.asyncio import AsyncSession
+from core.database import async_engine
 from models.models import Base
 
 app = FastAPI()

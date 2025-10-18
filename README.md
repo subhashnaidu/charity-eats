@@ -2,6 +2,22 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Environment Setup
+
+1. Copy the environment example file:
+```bash
+cp .env.local.example .env.development.local
+```
+
+2. Update the API base URL in `.env.development.local` if needed:
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
+
+For production deployments, set the `NEXT_PUBLIC_API_BASE_URL` environment variable to your production API URL.
+
+### Running the Development Server
+
 First, run the development server:
 
 ```bash

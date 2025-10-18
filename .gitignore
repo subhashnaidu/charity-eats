@@ -31,7 +31,8 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env*.local
+!.env.local.example
 
 # vercel
 .vercel
@@ -40,3 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /.venv
+/server/.venv
+/server/app/api/__pycache__
+/server/app/core/__pycache__
+/server/app/models/__pycache__
+/server/app/schemas/__pycache__
+/server/app/__pycache__

@@ -200,20 +200,6 @@ export default function SignupPage() {
             )}
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-              <input
-                id="phone"
-                name="phone"
-                type="text"
-                required
-                className={`mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black ${errors.phone ? 'border-red-500' : ''}`}
-                value={form.phone}
-                onChange={handleChange}
-                aria-invalid={!!errors.phone}
-                aria-describedby={errors.phone ? 'phone-error' : undefined}
-              />
-              {errors.phone && <p id="phone-error" className="text-red-600 text-xs mt-1">{errors.phone}</p>}
-            <div>
               <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
               <select
                 id="role"
@@ -228,104 +214,6 @@ export default function SignupPage() {
                 <option value="charity">Charity/Organizer</option>
               </select>
             </div>
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                required
-                className={`mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black ${errors.name ? 'border-red-500' : ''}`}
-                value={form.name}
-                onChange={handleChange}
-                aria-invalid={!!errors.name}
-                aria-describedby={errors.name ? 'name-error' : undefined}
-              />
-              {errors.name && <p id="name-error" className="text-red-600 text-xs mt-1">{errors.name}</p>}
-            </div>
-
-            {form.role !== "customer" && (
-              <>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className={`mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black ${errors.email ? 'border-red-500' : ''}`}
-                    value={form.email}
-                    onChange={handleChange}
-                    aria-invalid={!!errors.email}
-                    aria-describedby={errors.email ? 'email-error' : undefined}
-                  />
-                  {errors.email && <p id="email-error" className="text-red-600 text-xs mt-1">{errors.email}</p>}
-                </div>
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    className={`mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black ${errors.password ? 'border-red-500' : ''}`}
-                    value={form.password}
-                    onChange={handleChange}
-                    aria-invalid={!!errors.password}
-                    aria-describedby={errors.password ? 'password-error' : undefined}
-                  />
-                  {errors.password && <p id="password-error" className="text-red-600 text-xs mt-1">{errors.password}</p>}
-                </div>
-                <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    className={`mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black ${errors.confirmPassword ? 'border-red-500' : ''}`}
-                    value={form.confirmPassword}
-                    onChange={handleChange}
-                    aria-invalid={!!errors.confirmPassword}
-                    aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
-                  />
-                  {errors.confirmPassword && <p id="confirmPassword-error" className="text-red-600 text-xs mt-1">{errors.confirmPassword}</p>}
-                </div>
-                <div>
-                  <label htmlFor="restaurant_name" className="block text-sm font-medium text-gray-700">Restaurant/Organization Name</label>
-                  <input
-                    id="restaurant_name"
-                    name="restaurant_name"
-                    type="text"
-                    required
-                    className={`mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black ${errors.restaurant_name ? 'border-red-500' : ''}`}
-                    value={form.restaurant_name}
-                    onChange={handleChange}
-                    aria-invalid={!!errors.restaurant_name}
-                    aria-describedby={errors.restaurant_name ? 'restaurant_name-error' : undefined}
-                  />
-                  {errors.restaurant_name && <p id="restaurant_name-error" className="text-red-600 text-xs mt-1">{errors.restaurant_name}</p>}
-                </div>
-                <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address (Optional)</label>
-                  <input
-                    id="address"
-                    name="address"
-                    type="text"
-                    className={`mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-black ${errors.address ? 'border-red-500' : ''}`}
-                    value={form.address}
-                    onChange={handleChange}
-                    aria-invalid={!!errors.address}
-                    aria-describedby={errors.address ? 'address-error' : undefined}
-                  />
-                  {errors.address && <p id="address-error" className="text-red-600 text-xs mt-1">{errors.address}</p>}
-                </div>
-              </>
-            )}
 
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
